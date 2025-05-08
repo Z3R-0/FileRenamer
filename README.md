@@ -17,6 +17,7 @@ It can also rename using any custom regex pattern should you wish to do so.
 Grab the latest release from the [Releases page](https://github.com/Z3R-0/FileRenamer/releases).
 
 ## Usage
+**Be sure to prefix with .\ if you run this in Powershell like in the example GIF**
 
 ```sh
 FileRenamer.exe "C:/path/to/files" "(\s+)\(([^\)]+)\)" --dry-run
