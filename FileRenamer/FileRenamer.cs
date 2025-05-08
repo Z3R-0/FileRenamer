@@ -1,22 +1,32 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.CommandLine;
+using System.Text.RegularExpressions;
 
 public class FileRenamer {
+
+    static async Task<int> Main(string[] args) {
+        var directoryArg = new Argument<DirectoryInfo>("directory", "The directory containing files to rename.");
+        var patternArg = new Argument<string?>("pattern", () => @"(\s+)\(([^\)]+)\)", "Regex pattern to remove.");
+        var dryRunOption = new Option<bool>("--dry-run", "Simulate the renaming without changing any files.");
+
+        var rootCommand = new RootCommand("FileRenamer - remove unwanted patterns from filenames")
+        {
+            directoryArg,
+            patternArg,
+            dryRunOption
+        };
+
+        rootCommand.SetHandler((DirectoryInfo directory, string? pattern, bool dryRun) => {
+            RenameFiles(directory.FullName, pattern ?? "", dryRun);
+        }, directoryArg, patternArg, dryRunOption);
+
+        return await rootCommand.InvokeAsync(args);
+    }
 
     /// <summary>
     /// It takes a directory, finds all files in that directory and all subdirectories that match the
     /// regex pattern, and then renames them by removing the regex pattern (which is a date format)
     /// </summary>
-    public static void Main(string[] args) {
-        if (args.Length < 1 || args.Length > 3) {
-            Console.WriteLine("Usage: FileRenamer <directory> [pattern] [--dry-run]");
-            Console.WriteLine(@"Default pattern: (\s+)\(([^\)]+)\)");
-            return;
-        }
-
-        var directory = args[0];
-        var pattern = args.Length == 2 ? args[1] : @"(\s+)\(([^\)]+)\)";
-        var isDryRun = args.Any(a => a.Equals("--dry-run", StringComparison.OrdinalIgnoreCase));
-
+    private static void RenameFiles(string directory, string pattern, bool isDryRun) {
         if (!Directory.Exists(directory)) {
             Console.WriteLine($"Directory does not exist: {directory}");
             return;
@@ -49,7 +59,7 @@ public class FileRenamer {
                 continue;
             }
 
-            Console.WriteLine($"{(isDryRun ? "[DRY-RUN]" : "[RENAME]")} {fileName} → {newFileName}");
+            Console.WriteLine($"{(isDryRun ? "[DRY-RUN]" : "[RENAME]")} {fileName} -> {newFileName}");
 
             if (!isDryRun) {
                 try {
