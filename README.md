@@ -2,11 +2,11 @@
 
 Ever moved (back) from Linux to Windows, and had all your files on your external drive suddenly appended with some datestamp, like so:
 
-![Image of a list of files with some random date and timestamp appended](img\ewwww.png)
+![Image of files with datestamps appended to them](https://github.com/user-attachments/assets/b5b71fd5-cdaf-42f6-9dc5-0a7b20f7c4d7)
 
 Well I have, so that's what this little tool can solve. Simply plug the path to your problematic files into its arguments and boom:
 
-![Example usage GIF of FileRenamer](img\much-better.gif) 
+![Example usage GIF showcasing FileRenamer in action](https://github.com/user-attachments/assets/fd65058e-73b2-4e6f-86db-b3534f22aa0c)
 
 It can also rename using any custom regex pattern should you wish to do so. 
 
@@ -31,7 +31,7 @@ FileRenamer.exe --help
 
 ### Dry run example
 
-Add --dry-run as a third argument to preview what the tool would rename — without actually touching your files.
+Add --dry-run to preview what the tool would rename — without actually touching your files.
 
 This shows you exactly what would be renamed, so you can safely test custom patterns or check behavior before making real changes.
 
