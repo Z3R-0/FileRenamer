@@ -24,7 +24,9 @@ public class FileRenamer {
 
         var reg = new Regex(pattern);
 
-        Console.WriteLine("Starting file rename...");
+        Console.WriteLine($"Searching for files in: {directory}");
+        Console.WriteLine($"Using pattern: {pattern}");
+        Console.WriteLine($"Dry-run mode: {(isDryRun ? "ON" : "OFF")}");
 
         var fileNames = Directory.GetFiles(directory, "*", SearchOption.AllDirectories)
                                                 .Where(path => reg.IsMatch(path))
