@@ -7,20 +7,22 @@ public class FileRenamer {
     /// regex pattern, and then renames them by removing the regex pattern (which is a date format)
     /// </summary>
     public static void Main(string[] args) {
-        if (args.Length == 0 || args.Length > 2) {
-            Console.WriteLine("Usage: FileRenamer <directory> [pattern]");
+        if (args.Length < 1 || args.Length > 3) {
+            Console.WriteLine("Usage: FileRenamer <directory> [pattern] [--dry-run]");
             Console.WriteLine(@"Default pattern: (\s+)\(([^\)]+)\)");
             return;
         }
 
         var directory = args[0];
         var pattern = args.Length == 2 ? args[1] : @"(\s+)\(([^\)]+)\)";
-        var reg = new Regex(pattern);
+        var isDryRun = args.Any(a => a.Equals("--dry-run", StringComparison.OrdinalIgnoreCase));
 
         if (!Directory.Exists(directory)) {
             Console.WriteLine($"Directory does not exist: {directory}");
             return;
         }
+
+        var reg = new Regex(pattern);
 
         Console.WriteLine("Starting file rename...");
 
@@ -28,16 +30,34 @@ public class FileRenamer {
                                                 .Where(path => reg.IsMatch(path))
                                                 .ToList();
 
+        if (fileNames.Count == 0) {
+            Console.WriteLine("No matching files found.");
+            return;
+        }
+
+        Console.WriteLine($"Found {fileNames.Count} matching files.");
+
         foreach (var path in fileNames) {
             var dir = Path.GetDirectoryName(path);
             var fileName = Path.GetFileName(path);
-            var newPath = Path.Combine(dir, reg.Replace(fileName, ""));
+            var newFileName = reg.Replace(fileName, "");
+            var newPath = Path.Combine(dir!, newFileName);
 
-            Console.WriteLine($"Found {fileName}, renaming to {newPath}");
+            if (path == newPath) {
+                continue;
+            }
 
-            File.Move(path, newPath);
+            Console.WriteLine($"{(isDryRun ? "[DRY-RUN]" : "[RENAME]")} {fileName} → {newFileName}");
+
+            if (!isDryRun) {
+                try {
+                    File.Move(path, newPath);
+                } catch (Exception ex) {
+                    Console.WriteLine($"Failed to rename {fileName}: {ex.Message}");
+                }
+            }
         }
 
-        Console.WriteLine("Finished renaming files");
+        Console.WriteLine(isDryRun ? "Dry-run complete." : "File renaming complete.");
     }
 }
