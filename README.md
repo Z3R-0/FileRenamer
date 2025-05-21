@@ -1,3 +1,5 @@
+![.NET](https://img.shields.io/badge/.NET-8.0-blueviolet?logo=dotnet&logoColor=white)
+
 # FileRenamer
 
 Ever moved (back) from Linux to Windows, and had all your files on your external drive suddenly appended with some datestamp, like so:
